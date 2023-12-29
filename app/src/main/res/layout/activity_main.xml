@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:id="@+id/viewBGTorre"
-        android:layout_width="651dp"
+        android:layout_width="@dimen/area_torres"
         android:layout_height="180dp"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -29,7 +29,7 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_torre" />
 
         </LinearLayout>
@@ -44,7 +44,7 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_torre" />
 
         </LinearLayout>
@@ -59,7 +59,7 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_torre" />
 
         </LinearLayout>
@@ -67,7 +67,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="651dp"
+        android:layout_width="@dimen/area_torres"
         android:layout_height="200dp"
         android:orientation="horizontal"
         android:weightSum="3"
@@ -135,10 +135,10 @@
 
     <LinearLayout
         android:id="@+id/viewTorreLegenda"
-        android:layout_width="651dp"
+        android:layout_width="@dimen/area_torres"
         android:layout_height="30dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/small_border_radius"
+        android:background="@drawable/dialog_border_radius"
         android:backgroundTint="@color/darkBrow"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -197,18 +197,6 @@
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentInicioJogo"
-        android:name="com.example.torre_de_hani.Fragment_inicioJogo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

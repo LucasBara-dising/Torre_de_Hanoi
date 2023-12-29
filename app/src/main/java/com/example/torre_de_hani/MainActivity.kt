@@ -1,144 +1,195 @@
 package com.example.torre_de_hani
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isGone
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
-import androidx.core.view.marginBottom
-import androidx.fragment.app.FragmentContainerView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import com.example.torre_de_hani.databinding.ActivityMainBinding
+import com.example.torre_de_hani.databinding.StyleDialogNumDiscosBinding
 
 
 class MainActivity : AppCompatActivity() {
 
     //criando pilhas
-    private val torre1 = ArrayDeque(listOf(10,5,4,3,2,1))
+    private val torre1 = ArrayDeque(listOf(10))
     private val torre2 = ArrayDeque(listOf(10))
     private val torre3 = ArrayDeque(listOf(10))
 
+    //definidado pelo nome do xml + Binding no final
+    private lateinit var binding: ActivityMainBinding
 
-    @SuppressLint("MissingInflatedId")
+    var numDisco=0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
         //deita a tela
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        val fragmentInicioJogo: FragmentContainerView = findViewById(R.id.fragmentInicioJogo)
+        //abre dialog
+        showDialog_SetNumDiscos(this)
 
-        val numDiscos = 3
-        //val numDiscos = intent.getIntExtra("numDiscos", 0)
-        Log.d("numDiscos", numDiscos.toString())
-        if (numDiscos!=0){
-            fragmentInicioJogo.isGone
-        }else{
-            fragmentInicioJogo.isVisible
-        }
-
-
-
-//        //recebe o tamanho da tela
-//        val displayMetrics = DisplayMetrics()
-//        windowManager.defaultDisplay.getMetrics(displayMetrics)
-//        val height = displayMetrics.heightPixels* 0.10
-//        val width = displayMetrics.widthPixels * 0.20
-//
-//        //define as margens da fragmente
-//        val layoutParams = fragmentInicioJogo.layoutParams as ConstraintLayout.LayoutParams
-//        layoutParams.setMargins(width.toInt(), height.toInt(), width.toInt(), height.toInt())
-//        fragmentInicioJogo.layoutParams = layoutParams
-
-        val idViewtorre1:LinearLayout = findViewById(R.id.ViewTorre1)
-        val idViewtorre2:LinearLayout = findViewById(R.id.ViewTorre2)
-        val idViewtorre3:LinearLayout = findViewById(R.id.ViewTorre3)
-
-        //inverte a ordem
-        for (value in torre1.reversed()){
-            idViewtorre1.addView(dataBlocks(value,this))
-        }
+        val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
+        val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
+        val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
 
         val arraySendblock = HashMap<String, Int>()
-        var torreSeletecRement=0
-        
+        var torreSeletecRement = 0
+
+        if (numDisco>7){
+            val torreHeight= when(numDisco){
+                8->260
+                9->400
+                else->100
+            }
+            binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(R.dimen.area_torres, torreHeight)
+        }
 
         idViewtorre1.setOnClickListener {
-            if ( torreSeletecRement==0){
+            if (torreSeletecRement == 0) {
                 arraySendblock["Rementente"] = 1 //passa o id da torre que envia
                 torreSeletecRement++             //roda para definir destinatario
-            }else{
+            } else {
                 arraySendblock["Destinatario"] = 1 //passa o id da torre que recebe
-                torreSeletecRement=0
+                torreSeletecRement = 0
 
-                val valuesRementente= arraySendblock["Rementente"]
-                val valuesDestinatario= arraySendblock["Destinatario"]
+                val valuesRementente = arraySendblock["Rementente"]
+                val valuesDestinatario = arraySendblock["Destinatario"]
 
-                if(valuesRementente!=valuesDestinatario){
-                    tranfereBloco(getArrayElemto(valuesRementente), getArrayElemto(valuesDestinatario), getIdElemto(valuesRementente), getIdElemto(valuesDestinatario))
+                if (valuesRementente != valuesDestinatario) {
+                    tranfereBloco(
+                        getArrayElemto(valuesRementente),
+                        getArrayElemto(valuesDestinatario),
+                        getIdElemto(valuesRementente),
+                        getIdElemto(valuesDestinatario)
+                    )
                 }
 
 
             }
         }
-        
+
         idViewtorre2.setOnClickListener {
-            if ( torreSeletecRement==0){
+            if (torreSeletecRement == 0) {
                 arraySendblock["Rementente"] = 2
                 torreSeletecRement++
-            }else{
+            } else {
                 arraySendblock["Destinatario"] = 2
-                torreSeletecRement=0
+                torreSeletecRement = 0
 
-                val valuesRementente= arraySendblock["Rementente"]
-                val valuesDestinatario= arraySendblock["Destinatario"]
+                val valuesRementente = arraySendblock["Rementente"]
+                val valuesDestinatario = arraySendblock["Destinatario"]
 
-                if(valuesRementente!=valuesDestinatario){
-                    tranfereBloco(getArrayElemto(valuesRementente), getArrayElemto(valuesDestinatario), getIdElemto(valuesRementente), getIdElemto(valuesDestinatario))
+                if (valuesRementente != valuesDestinatario) {
+                    tranfereBloco(
+                        getArrayElemto(valuesRementente),
+                        getArrayElemto(valuesDestinatario),
+                        getIdElemto(valuesRementente),
+                        getIdElemto(valuesDestinatario)
+                    )
                 }
             }
         }
-        
+
         idViewtorre3.setOnClickListener {
-            if ( torreSeletecRement==0){
+            if (torreSeletecRement == 0) {
                 arraySendblock["Rementente"] = 3
                 torreSeletecRement++
-            }else{
+            } else {
                 arraySendblock["Destinatario"] = 3
-                torreSeletecRement=0
+                torreSeletecRement = 0
 
-                val valuesRementente= arraySendblock["Rementente"]
-                val valuesDestinatario= arraySendblock["Destinatario"]
+                val valuesRementente = arraySendblock["Rementente"]
+                val valuesDestinatario = arraySendblock["Destinatario"]
 
-                if(valuesRementente!=valuesDestinatario){
-                    tranfereBloco(getArrayElemto(valuesRementente), getArrayElemto(valuesDestinatario), getIdElemto(valuesRementente), getIdElemto(valuesDestinatario))
+                if (valuesRementente != valuesDestinatario) {
+                    tranfereBloco(
+                        getArrayElemto(valuesRementente),
+                        getArrayElemto(valuesDestinatario),
+                        getIdElemto(valuesRementente),
+                        getIdElemto(valuesDestinatario)
+                    )
                 }
             }
         }
 
     }
 
+    //-----------------------dialog-----------------\\
+    fun showDialog_SetNumDiscos(context: Context?) {
+        //define tamanho
+        val width = (resources.displayMetrics.widthPixels * 0.70).toInt()
+        val height = (resources.displayMetrics.heightPixels * 0.75).toInt()
+
+        val dialog = Dialog(context!!)
+        val dialogBinding: StyleDialogNumDiscosBinding = StyleDialogNumDiscosBinding.inflate(LayoutInflater.from(context))
+        dialog.setContentView(dialogBinding.root)
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_border_radius)
+        dialog.window?.setLayout(width, height)
+        dialog.setCancelable(false)
+        dialog.show()
+
+        //recebe valor e convert em int
+        val txt_numDisco: String = dialogBinding.txtViewNumDiscos.getText().toString()
+        numDisco = txt_numDisco.toInt()
+
+        dialogBinding.btnMaisDiscos.setOnClickListener {
+            if (numDisco in 3..8){
+                // mais um disco
+                numDisco++
+                dialogBinding.txtViewNumDiscos.setText(numDisco.toString())
+            }
+       }
+
+        dialogBinding.btnMenosDiscos.setOnClickListener {
+            if (numDisco in 4..9){
+                //menos um disco
+                numDisco--
+                dialogBinding.txtViewNumDiscos.setText(numDisco.toString())
+            }
+        }
+
+        dialogBinding.btnIniciaJogo.setOnClickListener {
+            dialog.dismiss()
+            while (numDisco>=1){
+                torre1.addLast(numDisco)
+                numDisco--
+            }
+
+            //chama funçao para mostrar os blocos
+            for (value in torre1.reversed()) {
+                binding.ViewTorre1.addView(dataBlocks(value, this))
+            }
+        }
+    }
 
     private fun getIdElemto(id: Int?): LinearLayout {
-        val idViewtorre1:LinearLayout = findViewById(R.id.ViewTorre1)
-        val idViewtorre2:LinearLayout = findViewById(R.id.ViewTorre2)
-        val idViewtorre3:LinearLayout = findViewById(R.id.ViewTorre3)
+        val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
+        val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
+        val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
 
-        when(id){
-            1 ->  return idViewtorre1
-            2 ->  return idViewtorre2
-            3 ->  return idViewtorre3
+        when (id) {
+            1 -> return idViewtorre1
+            2 -> return idViewtorre2
+            3 -> return idViewtorre3
             else -> {
                 print("erro: Numero não LinearLayout")
             }
@@ -148,10 +199,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getArrayElemto(id: Int?): ArrayDeque<Int> {
-         when(id){
-            1 ->  return torre1
-            2 ->  return torre2
-            3 ->  return torre3
+        when (id) {
+            1 -> return torre1
+            2 -> return torre2
+            3 -> return torre3
             else -> {
                 print("erro: Numero não é array")
             }
@@ -160,21 +211,28 @@ class MainActivity : AppCompatActivity() {
         return torre1
     }
 
-    private fun tranfereBloco(remetente:ArrayDeque<Int>, destinatario:ArrayDeque<Int>, idRemetente:LinearLayout, idDestinatario:LinearLayout){
-        if(remetente.last()!=10) {
+    private fun tranfereBloco(
+        remetente: ArrayDeque<Int>,
+        destinatario: ArrayDeque<Int>,
+        idRemetente: LinearLayout,
+        idDestinatario: LinearLayout
+    ) {
+        //evita view vazia
+        if (remetente.isEmpty()) {
+            remetente.addLast(0)
+        }
 
-            //evita view vazia
-            if (remetente.isEmpty()) {
-                remetente.addLast(0)
-            }
+        val valueBlock = remetente.last()
+        Log.d("ultimo itens", valueBlock.toString())
+        Log.d("remetentes", remetente.toString())
+        Log.d("destinatario", destinatario.toString())
 
-            val valueBlock = remetente.last()
-            Log.d("Ultimo bloco", "Bloco movido $valueBlock, Ultimo bloco ${destinatario.last()}")
+        if(remetente.last() != 10) {
             if (valueBlock < destinatario.last()) {
-                Log.d("Movimento", "Permitido")
                 val value = remetente.removeLast()//remove do remetente
                 destinatario.addLast(value)//add no destinatario
 
+                //recarrega
                 idRemetente.removeAllViewsInLayout()
                 idDestinatario.removeAllViewsInLayout()
 
@@ -189,15 +247,13 @@ class MainActivity : AppCompatActivity() {
 
                 verificaViroria()
             } else {
-                Log.d("Movimento", "Não Permitido")
                 Toast.makeText(this, "Movimento Não Permitido", LENGTH_LONG).show()
-
             }
         }
     }
 
-    fun verificaViroria():Boolean{
-        if (torre2.size==6 || torre3.size==6){
+    fun verificaViroria(): Boolean {
+        if (torre2.size == 6 || torre3.size == 6) {
             Toast.makeText(this, "Vitoriaaa", LENGTH_LONG).show()
             return true
         }
@@ -205,53 +261,54 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("WrongViewCast")
-    private fun dataBlocks(numBlock:Int, context: Context): TextView {
+    private fun dataBlocks(numBlock: Int, context: Context): TextView {
         val bloco = TextView(context)
         bloco.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        when (numBlock) {
-            0 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(10, 10)
-                bloco.setBackgroundColor(Color.parseColor("#333333"))
-                bloco.setText("0")
-            }
-            1 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(100, 70)
-                bloco.setBackgroundColor(Color.parseColor("#FF5733"))
-                bloco.setText("1")
-            }
-            2 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(200, 70)
-                bloco.setBackgroundColor(Color.parseColor("#FF884D"))
-                bloco.setText("2")
-            }
-            3 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(300, 70)
-                bloco.setBackgroundColor(Color.parseColor("#FFB366"))
-                bloco.setText("3")
-            }
-            4 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(400, 70)
-                bloco.setBackgroundColor(Color.parseColor("#FFD699"))
-                bloco.setText("4")
-            }
-            5 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(500, 70)
-                bloco.setBackgroundColor(Color.parseColor("#645B2E"))
-                bloco.setText("5")
-            }
-            10 -> {
-                bloco.layoutParams = LinearLayout.LayoutParams(0, 0)
-                bloco.setBackgroundColor(Color.parseColor("#484744"))
-            }
+
+        val blocoWidth = (numBlock * 70)
+        bloco.layoutParams = LinearLayout.LayoutParams(blocoWidth, 50)
+        bloco.text = numBlock.toString()
+        bloco.setBackgroundResource(R.drawable.border_radius_disk)
+
+        if (numBlock==10){
+            bloco.layoutParams = LinearLayout.LayoutParams(0, 0)
+        }
+
+        //TODO: Colocar style
+        val colorDisco = when (numBlock) {
+           10 -> "#333333"//defoult
+
+            1 -> "#FF3074"
+
+            2 -> "#3128E8"
+
+            3 -> "#23FFC9"
+
+            4 -> "#B2E808"
+
+            5 -> "#FFA11E"
+
+            6 -> "#645B2E"
+
+            7 -> "#645B2E"
+
+            8 -> "#645B2E"
+
+            9 -> "#645B2E"
+             
+
             else -> { // Note the block
                 print("erro:Numero não existente")
             }
+
         }
+        //define cor
+        bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco.toString()));
 
         return bloco
     }
-
 }
+
+
 
 

@@ -1,9 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    //extençoes kotlin para facilitar
-    id ("kotlin-android")
-    id ("kotlin-parcelize")
 }
 
 android {
@@ -35,6 +32,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    buildFeatures  {
+        viewBinding  = true
     }
 }
 
