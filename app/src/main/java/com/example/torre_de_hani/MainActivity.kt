@@ -1,51 +1,69 @@
 package com.example.torre_de_hani
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.PorterDuff
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
+import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import com.example.torre_de_hani.databinding.ActivityMainBinding
+import com.example.torre_de_hani.databinding.StyleDialogInfosBinding
 import com.example.torre_de_hani.databinding.StyleDialogNumDiscosBinding
+import com.example.torre_de_hani.databinding.StyleDialogVitoriaBinding
 
 
 class MainActivity : AppCompatActivity() {
 
     //criando pilhas
-    private val torre1 = ArrayDeque(listOf(10))
-    private val torre2 = ArrayDeque(listOf(10))
-    private val torre3 = ArrayDeque(listOf(10))
+    private var torre1 = ArrayDeque(listOf(10))
+    private var torre2 = ArrayDeque(listOf(10))
+    private var torre3 = ArrayDeque(listOf(10))
 
     //definidado pelo nome do xml + Binding no final
     private lateinit var binding: ActivityMainBinding
 
-    var numDisco=0
+    private var numDisco: Int = 0
+    //define tamanho
+    private var widthDialog = 0
+    private var heightDialog = 0
 
+    /*TO DO:
+    -ao erras vibrar
+    - tela de menu(novo jogo, regras, tirar vibro)
+    -novas cores
+    -opção de arastar
+    -mudar tamhos dos discos
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
+        //esconde staus bar
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
+
         //deita a tela
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
+        //define tamanho de dialog
+        widthDialog= (resources.displayMetrics.widthPixels * 0.70).toInt()
+        heightDialog = (resources.displayMetrics.heightPixels * 0.75).toInt()
+
         //abre dialog
-        showDialog_SetNumDiscos(this)
+        showDialogSetNumDiscos(this)
 
         val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
         val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
@@ -53,15 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         val arraySendblock = HashMap<String, Int>()
         var torreSeletecRement = 0
-
-        if (numDisco>7){
-            val torreHeight= when(numDisco){
-                8->260
-                9->400
-                else->100
-            }
-            binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(R.dimen.area_torres, torreHeight)
-        }
 
         idViewtorre1.setOnClickListener {
             if (torreSeletecRement == 0) {
@@ -82,8 +91,6 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
-
-
             }
         }
 
@@ -131,71 +138,171 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnMenu.setOnClickListener {
+            showDialogMenu(this)
+        }
+
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        //esconde staus bar
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
     }
 
     //-----------------------dialog-----------------\\
-    fun showDialog_SetNumDiscos(context: Context?) {
-        //define tamanho
-        val width = (resources.displayMetrics.widthPixels * 0.70).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.75).toInt()
+    private fun showDialogSetNumDiscos(context: Context?) {
+        var numDiscoDialog:Int
+
+        val widthDialog= (resources.displayMetrics.widthPixels * 0.70).toInt()
+        val heightDialog = (resources.displayMetrics.heightPixels * 0.75).toInt()
 
         val dialog = Dialog(context!!)
         val dialogBinding: StyleDialogNumDiscosBinding = StyleDialogNumDiscosBinding.inflate(LayoutInflater.from(context))
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_border_radius)
-        dialog.window?.setLayout(width, height)
+        dialog.window?.setLayout(widthDialog, heightDialog)
         dialog.setCancelable(false)
         dialog.show()
 
         //recebe valor e convert em int
-        val txt_numDisco: String = dialogBinding.txtViewNumDiscos.getText().toString()
-        numDisco = txt_numDisco.toInt()
+        val txtNumDisco: String = dialogBinding.txtViewNumDiscos.text.toString()
+        numDiscoDialog = txtNumDisco.toInt()
 
         dialogBinding.btnMaisDiscos.setOnClickListener {
-            if (numDisco in 3..8){
+            if (numDiscoDialog in 3..8){
                 // mais um disco
-                numDisco++
-                dialogBinding.txtViewNumDiscos.setText(numDisco.toString())
+                numDiscoDialog++
+                dialogBinding.txtViewNumDiscos.text = numDiscoDialog.toString()
             }
        }
 
         dialogBinding.btnMenosDiscos.setOnClickListener {
-            if (numDisco in 4..9){
+            if (numDiscoDialog in 5..9){
                 //menos um disco
-                numDisco--
-                dialogBinding.txtViewNumDiscos.setText(numDisco.toString())
+                numDiscoDialog--
+                dialogBinding.txtViewNumDiscos.text = numDiscoDialog.toString()
             }
+
         }
 
         dialogBinding.btnIniciaJogo.setOnClickListener {
             dialog.dismiss()
-            while (numDisco>=1){
-                torre1.addLast(numDisco)
-                numDisco--
+            numDisco=numDiscoDialog
+
+            while (numDiscoDialog>=1){
+                torre1.addLast(numDiscoDialog)
+                numDiscoDialog--
             }
 
             //chama funçao para mostrar os blocos
             for (value in torre1.reversed()) {
                 binding.ViewTorre1.addView(dataBlocks(value, this))
             }
+
+            //TO DO: fazer poste ficar maior com mais discos
+//            if (numDisco>=7){
+//                val torreHeight= when(numDisco){
+//                    7->260
+//                    8->300
+//                    9->400
+//                    else->100
+//                }
+//
+//                binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(binding.viewBGTorre.layoutParams.width,torreHeight)
+//                Log.d("Tamanho torre", binding.viewBGTorre.layoutParams.height.toString())
+//                Log.d("Tamanho torre when ", torreHeight.toString())
+//            }
         }
     }
 
+
+    private fun showDialogMenu(context: Context?) {
+        val dialogMenu = Dialog(context!!)
+        val dialogMenuBinding: StyleDialogInfosBinding = StyleDialogInfosBinding.inflate(LayoutInflater.from(context))
+        dialogMenu.setContentView(dialogMenuBinding.root)
+        dialogMenu.window?.setBackgroundDrawableResource(R.drawable.dialog_border_radius)
+        dialogMenu.window?.setLayout(widthDialog, heightDialog)
+        dialogMenu.setCancelable(true)
+        dialogMenu.show()
+
+        dialogMenuBinding.btnCancelDialogMenu.setOnClickListener{
+            dialogMenu.dismiss()
+        }
+
+        dialogMenuBinding.btnIniciaJogo.setOnClickListener{
+            dialogMenu.dismiss()
+            novoJogo()
+        }
+
+    }
+
+    private fun showDialogVitoria(context: Context?) {
+        val dialogVitoria = Dialog(context!!)
+        val dialogVitoriaBinding: StyleDialogVitoriaBinding = StyleDialogVitoriaBinding.inflate(LayoutInflater.from(context))
+        dialogVitoria.setContentView(dialogVitoriaBinding.root)
+        dialogVitoria.window?.setBackgroundDrawableResource(R.drawable.dialog_border_radius)
+        dialogVitoria.window?.setLayout(widthDialog, heightDialog)
+        dialogVitoria.setCancelable(false)
+        dialogVitoria.show()
+
+        dialogVitoriaBinding.btnIniciaJogo.setOnClickListener{
+            dialogVitoria.dismiss()
+            novoJogo()
+        }
+    }
+
+    private fun vibratePhone(context: Context) {
+//        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+//        vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        if (Build.VERSION.SDK_INT >= 31) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            val vibrator = vibratorManager.defaultVibrator
+            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+        } else {
+            val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                v.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+            }
+        }
+
+    }
+
+    private fun novoJogo(){
+        //zera os arrays
+        torre1 = ArrayDeque(listOf(10))
+        torre2 = ArrayDeque(listOf(10))
+        torre3 = ArrayDeque(listOf(10))
+
+        //recarrega
+        binding.ViewTorre1.removeAllViewsInLayout()
+        binding.ViewTorre2.removeAllViewsInLayout()
+        binding.ViewTorre3.removeAllViewsInLayout()
+
+        binding.ViewTorre1.addView(dataBlocks(10, this))
+        binding.ViewTorre2.addView(dataBlocks(10, this))
+        binding.ViewTorre3.addView(dataBlocks(10, this))
+
+        showDialogSetNumDiscos(this)
+    }
+
     private fun getIdElemto(id: Int?): LinearLayout {
-        val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
-        val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
-        val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
+//        val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
+//        val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
+//        val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
 
         when (id) {
-            1 -> return idViewtorre1
-            2 -> return idViewtorre2
-            3 -> return idViewtorre3
+            1 -> return binding.ViewTorre1
+            2 -> return binding.ViewTorre2
+            3 -> return binding.ViewTorre3
             else -> {
                 print("erro: Numero não LinearLayout")
             }
 
         }
-        return idViewtorre1
+        return binding.ViewTorre1
     }
 
     private fun getArrayElemto(id: Int?): ArrayDeque<Int> {
@@ -223,9 +330,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         val valueBlock = remetente.last()
-        Log.d("ultimo itens", valueBlock.toString())
-        Log.d("remetentes", remetente.toString())
-        Log.d("destinatario", destinatario.toString())
 
         if(remetente.last() != 10) {
             if (valueBlock < destinatario.last()) {
@@ -247,29 +351,39 @@ class MainActivity : AppCompatActivity() {
 
                 verificaViroria()
             } else {
-                Toast.makeText(this, "Movimento Não Permitido", LENGTH_LONG).show()
+                Toast.makeText(this, "Movimento Não Permitido", LENGTH_SHORT).show()
+                vibratePhone(this)
             }
         }
     }
 
-    fun verificaViroria(): Boolean {
-        if (torre2.size == 6 || torre3.size == 6) {
-            Toast.makeText(this, "Vitoriaaa", LENGTH_LONG).show()
-            return true
+    private fun verificaViroria(){
+        if (torre2.size == numDisco+1 || torre3.size == numDisco+1) {
+            showDialogVitoria(this)
         }
-        return false
     }
 
 
     private fun dataBlocks(numBlock: Int, context: Context): TextView {
         val bloco = TextView(context)
-        bloco.textAlignment = View.TEXT_ALIGNMENT_CENTER
 
-        val blocoWidth = (numBlock * 70)
-        bloco.layoutParams = LinearLayout.LayoutParams(blocoWidth, 50)
-        bloco.text = numBlock.toString()
+        //Define tamanhos
+        val blocoWidth:Int = when(numBlock){
+            1->numBlock * 90
+            else->numBlock*70
+        }
+
+        val blocoHeight:Int = when(numDisco){
+            3->100
+            4->80
+            5->70
+            else->60
+        }
+
+        bloco.layoutParams = LinearLayout.LayoutParams(blocoWidth, blocoHeight)
         bloco.setBackgroundResource(R.drawable.border_radius_disk)
 
+        //mantem o 10 "invisivel"
         if (numBlock==10){
             bloco.layoutParams = LinearLayout.LayoutParams(0, 0)
         }
@@ -278,32 +392,32 @@ class MainActivity : AppCompatActivity() {
         val colorDisco = when (numBlock) {
            10 -> "#333333"//defoult
 
-            1 -> "#FF3074"
+            1 -> "#008688"//vermelho
 
-            2 -> "#3128E8"
+            2 -> "#0095B7"//laranja
 
-            3 -> "#23FFC9"
+            3 -> "#38731D"//azul
 
-            4 -> "#B2E808"
+            4 -> "#A8C93E" //roxo
 
-            5 -> "#FFA11E"
+            5 -> "#EAA322"//verde
 
-            6 -> "#645B2E"
+            6 -> "#C2261C" //ciano
 
-            7 -> "#645B2E"
+            7 -> "#F09E07"//amarelo
 
-            8 -> "#645B2E"
+            8 -> "#D204FF"//roxo
 
-            9 -> "#645B2E"
+            9 -> "#FF9E42"//laranja
              
 
             else -> { // Note the block
-                print("erro:Numero não existente")
+                "erro:Numero não existente"
             }
 
         }
         //define cor
-        bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco.toString()));
+        bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco))
 
         return bloco
     }
