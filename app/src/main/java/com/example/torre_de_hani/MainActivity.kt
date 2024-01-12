@@ -2,10 +2,10 @@ package com.example.torre_de_hani
 
 import android.app.Dialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -33,17 +33,15 @@ class MainActivity : AppCompatActivity() {
     //definidado pelo nome do xml + Binding no final
     private lateinit var binding: ActivityMainBinding
 
-    private var numDisco: Int = 0
+    private var numDisco = 0
+
     //define tamanho
     private var widthDialog = 0
     private var heightDialog = 0
 
     /*TODO:
-    -opção de arastar
-    - son ao mudar os discos
     - alterar btn de sair
     - colocar anuncios
-    - salvar jogo
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,25 +63,15 @@ class MainActivity : AppCompatActivity() {
         widthDialog= (widthTela * 0.80).toInt()
         heightDialog = (heightTela * 0.75).toInt()
 
-
-        //define tamanho da barra
-        //binding.layoutGeral.layoutParams = LinearLayout.LayoutParams((resources.displayMetrics.widthPixels * 0.80).toInt(), LinearLayout.LayoutParams.WRAP_CONTENT)
-
-       // binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(heightTela * 0.30).toInt())
-
-
         //---------retomar jogo------------------
-//        val prefs: SharedPreferences = this.getSharedPreferences("possisao_jogo", 0)
-//        val sizeTorre2 = prefs.getInt("tamanho_torre3", 0)
-//        println("Teste tamanho de torre, $sizeTorre2")
-//        if (sizeTorre2<=1){
-//            //abre dialog
-//            showDialogSetNumDiscos(this)
-//        }else{
-//            showDialogContinuaJogo(this)
-//        }
+        val tinyDB = TinyDB(applicationContext)
+        val booelnaContinua = tinyDB.getBoolean("continuarJogo")
 
-        showDialogSetNumDiscos(this)
+        if(booelnaContinua==true){
+            showDialogContinuaJogo(this)
+        }else{
+            showDialogSetNumDiscos(this)
+        }
 
         val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
         val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
@@ -94,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         idViewtorre1.setOnClickListener {
             if (torreSeletecRement == 0) {
-                SetViewTorreSelect(1)
+                setViewTorreSelect(1) //define se a barra de fundo esta selecionada
                 arraySendblock["Rementente"] = 1 //passa o id da torre que envia
                 torreSeletecRement++             //roda para definir destinatario
             } else {
@@ -112,13 +100,13 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
-                SetViewTorreSelect(0)
+                setViewTorreSelect(0)
             }
         }
 
         idViewtorre2.setOnClickListener {
             if (torreSeletecRement == 0) {
-                SetViewTorreSelect(2)
+                setViewTorreSelect(2)
                 arraySendblock["Rementente"] = 2
                 torreSeletecRement++
             } else {
@@ -136,13 +124,13 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
-                SetViewTorreSelect(0)
+                setViewTorreSelect(0)
             }
         }
 
         idViewtorre3.setOnClickListener {
             if (torreSeletecRement == 0) {
-                SetViewTorreSelect(3)
+                setViewTorreSelect(3)
                 arraySendblock["Rementente"] = 3
                 torreSeletecRement++
             } else {
@@ -160,7 +148,7 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
-                SetViewTorreSelect(0)
+                setViewTorreSelect(0)
             }
         }
 
@@ -172,8 +160,7 @@ class MainActivity : AppCompatActivity() {
     @Override
     public override fun onPause() {
         super.onPause()
-        println("tela entrou em onPause")
-        salveGame()
+
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -232,20 +219,6 @@ class MainActivity : AppCompatActivity() {
             for (value in torre1.reversed()) {
                 binding.ViewTorre1.addView(dataBlocks(value, this))
             }
-
-            //TO DO: fazer poste ficar maior com mais discos
-//            if (numDisco>=7){
-//                val torreHeight= when(numDisco){
-//                    7->260
-//                    8->300
-//                    9->400
-//                    else->100
-//                }
-//
-//                binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(binding.viewBGTorre.layoutParams.width,torreHeight)
-//                Log.d("Tamanho torre", binding.viewBGTorre.layoutParams.height.toString())
-//                Log.d("Tamanho torre when ", torreHeight.toString())
-//            }
         }
     }
 
@@ -301,7 +274,7 @@ class MainActivity : AppCompatActivity() {
 
         dialogContinuaJogoBinding.btnContinuaJogo.setOnClickListener{
             dialogContinuaJogo.dismiss()
-            reconstruindoJogoAntigo(this)
+            reconstruindoJogoAntigo()
         }
     }
 
@@ -326,6 +299,9 @@ class MainActivity : AppCompatActivity() {
         binding.ViewTorre3.addView(dataBlocks(10, this))
 
         showDialogSetNumDiscos(this)
+
+        val tinyDB = TinyDB(applicationContext)
+        tinyDB.putBoolean("continuarJogo",false)
     }
 
     private fun getIdElemto(id: Int?): LinearLayout {
@@ -369,6 +345,9 @@ class MainActivity : AppCompatActivity() {
 
         if(remetente.last() != 10) {
             if (valueBlock < destinatario.last()) {
+                //son de madeira
+                soundToc()
+
                 val value = remetente.removeLast()//remove do remetente
                 destinatario.addLast(value)//add no destinatario
 
@@ -391,6 +370,7 @@ class MainActivity : AppCompatActivity() {
                 vibratePhone()
             }
         }
+        salveGame()
     }
 
     private fun verificaViroria(){
@@ -413,18 +393,14 @@ class MainActivity : AppCompatActivity() {
 
         val blocoHeight:Int= heightViewTorre/numDisco
 
-
         bloco.layoutParams = LinearLayout.LayoutParams(blocoWidth, blocoHeight)
         bloco.setBackgroundResource(R.drawable.border_radius_disk)
-
-        bloco.baseline
 
         //mantem o 10 "invisivel"
         if (numBlock==10){
             bloco.layoutParams = LinearLayout.LayoutParams(0, 0)
         }
 
-        //TODO: Colocar style
         val colorDisco = when (numBlock) {
            10 -> "#333333"//defoult
 
@@ -458,72 +434,68 @@ class MainActivity : AppCompatActivity() {
         return bloco
     }
 
-    fun salveGame(){
-        // Armazenando dados em SharedPreferences
-        val sharedPreferences = getSharedPreferences("possisao_jogo", MODE_PRIVATE)
-        // Criando um objeto Editor para editar (gravar no arquivo)
-        val possisaoJogoSH = sharedPreferences.edit()
+    private fun salveGame(){
+        println("salvou")
+        //classe para armazenar
+        val tinyDB = TinyDB(applicationContext)
 
-        //armazena, nome do arquivo e valor
-        //torre 1
-        possisaoJogoSH.putInt("tamanho_torre1", torre1.size)
-        for (i in 0 until torre1.size) {
-            possisaoJogoSH.putInt("torre1_$i", torre1[i])
-            println("Teste torre 1 ${torre1[i]}")
-        }
+        //convert array deque in arrayList<int>
+        val torre1Store=ArrayList<Int>(torre1)
+        val torre2Store=ArrayList<Int>(torre2)
+        val torre3Store=ArrayList<Int>(torre3)
 
-        //torre 2
-        possisaoJogoSH.putInt("tamanho_torre2", torre2.size)
-        for (i in 0 until torre2.size) {
-            possisaoJogoSH.putInt("torre2_$i", torre2[i])
-        }
+        // put /save
+        tinyDB.putListInt("torre1_store", torre1Store)
+        tinyDB.putListInt("torre2_store", torre2Store)
+        tinyDB.putListInt("torre3_store", torre3Store)
 
-        //torre 3
-        possisaoJogoSH.putInt("tamanho_torre3", torre3.size)
-        for (i in 0 until torre3.size) {
-            possisaoJogoSH.putInt("torre3_$i", torre3[i])
-        }
-        //aplica
-        possisaoJogoSH.apply()
-
+        tinyDB.putInt("numDisco",numDisco)
+        tinyDB.putBoolean("continuarJogo",true)
     }
 
     //recuperando
-    fun reconstruindoJogoAntigo(context: Context){
+    private fun reconstruindoJogoAntigo(){
+        //classe para armazenar
+        val tinyDB = TinyDB(applicationContext)
+
+        //get
+        val valorTorre1: ArrayList<Int> = tinyDB.getListInt("torre1_store")
+        val valorTorre2: ArrayList<Int> = tinyDB.getListInt("torre2_store")
+        val valorTorre3: ArrayList<Int> = tinyDB.getListInt("torre3_store")
+
+        torre1.clear()
+        torre1.addAll(valorTorre1)
+
+        torre2.clear()
+        torre2.addAll(valorTorre2)
+
+        torre3.clear()
+        torre3.addAll(valorTorre3)
+        numDisco=tinyDB.getInt("numDisco")
+
         //recarrega
         binding.ViewTorre1.removeAllViewsInLayout()
         binding.ViewTorre2.removeAllViewsInLayout()
         binding.ViewTorre3.removeAllViewsInLayout()
 
-        val prefs: SharedPreferences = context.getSharedPreferences("possisao_jogo", 0)
-        val sizeTorre1 = prefs.getInt("tamanho_torre1", 0)
-        val sizeTorre2 = prefs.getInt("tamanho_torre2", 0)
-        val sizeTorre3 = prefs.getInt("tamanho_torre3", 0)
-
-        numDisco=(sizeTorre1-1)+(sizeTorre2-1)+(sizeTorre3-1)
-
-        for (i in 0 until sizeTorre1){
-            torre1.add(prefs.getInt("torre1_$i", 0))
-            println("Teste tamanho de torre, $torre1 e valro de i $i")
-            binding.ViewTorre1.addView(dataBlocks(i, this))
+        for (valueBlockTorre1 in torre1.reversed()) {
+            binding.ViewTorre1.addView(dataBlocks(valueBlockTorre1, this))
         }
 
-
-        for (i in 0 until sizeTorre2){
-            torre2.add(prefs.getInt("torre2_$i", 0))
-            binding.ViewTorre2.addView(dataBlocks(i, this))
+        for (valueBlockTorre2 in torre2.reversed()) {
+            binding.ViewTorre2.addView(dataBlocks(valueBlockTorre2, this))
         }
 
-
-        for (i in 0 until sizeTorre3){
-            torre3.add(prefs.getInt("torre3_$i", 0))
-            binding.ViewTorre3.addView(dataBlocks(10, this))
+        for (valueBlockTorre3 in torre3.reversed()) {
+            binding.ViewTorre3.addView(dataBlocks(valueBlockTorre3, this))
         }
-
-        println("Teste torre, $torre2")
     }
 
-    private fun SetViewTorreSelect(torre:Int) = when(torre){
+    private fun soundToc(){
+        val toc: MediaPlayer = MediaPlayer.create(this, R.raw.sound_toc)
+        toc.start()
+    }
+    private fun setViewTorreSelect(torre:Int) = when(torre){
         1->{
             binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre_select)
             binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)

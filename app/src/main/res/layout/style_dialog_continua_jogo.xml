@@ -21,7 +21,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
             android:background="@drawable/small_border_radius"
-            android:backgroundTint="@color/green"
+            android:backgroundTint="@color/red"
             android:paddingStart="80dp"
             android:paddingEnd="80dp"
             android:text="@string/txt_novo_jogo"
