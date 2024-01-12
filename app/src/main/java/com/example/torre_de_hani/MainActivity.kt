@@ -2,14 +2,13 @@ package com.example.torre_de_hani
 
 import android.app.Dialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.os.VibratorManager
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -18,6 +17,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import com.example.torre_de_hani.databinding.ActivityMainBinding
+import com.example.torre_de_hani.databinding.StyleDialogContinuaJogoBinding
 import com.example.torre_de_hani.databinding.StyleDialogInfosBinding
 import com.example.torre_de_hani.databinding.StyleDialogNumDiscosBinding
 import com.example.torre_de_hani.databinding.StyleDialogVitoriaBinding
@@ -38,12 +38,12 @@ class MainActivity : AppCompatActivity() {
     private var widthDialog = 0
     private var heightDialog = 0
 
-    /*TO DO:
-    -ao erras vibrar
-    - tela de menu(novo jogo, regras, tirar vibro)
-    -novas cores
+    /*TODO:
     -opção de arastar
-    -mudar tamhos dos discos
+    - son ao mudar os discos
+    - alterar btn de sair
+    - colocar anuncios
+    - salvar jogo
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,11 +58,31 @@ class MainActivity : AppCompatActivity() {
         //deita a tela
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        //define tamanho de dialog
-        widthDialog= (resources.displayMetrics.widthPixels * 0.70).toInt()
-        heightDialog = (resources.displayMetrics.heightPixels * 0.75).toInt()
+        val widthTela=resources.displayMetrics.widthPixels
+        val heightTela=resources.displayMetrics.heightPixels
 
-        //abre dialog
+        //define tamanho de dialog
+        widthDialog= (widthTela * 0.80).toInt()
+        heightDialog = (heightTela * 0.75).toInt()
+
+
+        //define tamanho da barra
+        //binding.layoutGeral.layoutParams = LinearLayout.LayoutParams((resources.displayMetrics.widthPixels * 0.80).toInt(), LinearLayout.LayoutParams.WRAP_CONTENT)
+
+       // binding.viewBGTorre.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,(heightTela * 0.30).toInt())
+
+
+        //---------retomar jogo------------------
+//        val prefs: SharedPreferences = this.getSharedPreferences("possisao_jogo", 0)
+//        val sizeTorre2 = prefs.getInt("tamanho_torre3", 0)
+//        println("Teste tamanho de torre, $sizeTorre2")
+//        if (sizeTorre2<=1){
+//            //abre dialog
+//            showDialogSetNumDiscos(this)
+//        }else{
+//            showDialogContinuaJogo(this)
+//        }
+
         showDialogSetNumDiscos(this)
 
         val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
@@ -74,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 
         idViewtorre1.setOnClickListener {
             if (torreSeletecRement == 0) {
+                SetViewTorreSelect(1)
                 arraySendblock["Rementente"] = 1 //passa o id da torre que envia
                 torreSeletecRement++             //roda para definir destinatario
             } else {
@@ -91,11 +112,13 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
+                SetViewTorreSelect(0)
             }
         }
 
         idViewtorre2.setOnClickListener {
             if (torreSeletecRement == 0) {
+                SetViewTorreSelect(2)
                 arraySendblock["Rementente"] = 2
                 torreSeletecRement++
             } else {
@@ -113,11 +136,13 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
+                SetViewTorreSelect(0)
             }
         }
 
         idViewtorre3.setOnClickListener {
             if (torreSeletecRement == 0) {
+                SetViewTorreSelect(3)
                 arraySendblock["Rementente"] = 3
                 torreSeletecRement++
             } else {
@@ -135,6 +160,7 @@ class MainActivity : AppCompatActivity() {
                         getIdElemto(valuesDestinatario)
                     )
                 }
+                SetViewTorreSelect(0)
             }
         }
 
@@ -143,10 +169,15 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+    @Override
+    public override fun onPause() {
+        super.onPause()
+        println("tela entrou em onPause")
+        salveGame()
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-
         //esconde staus bar
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         actionBar?.hide()
@@ -254,20 +285,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun vibratePhone(context: Context) {
-//        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-//        vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
-        if (Build.VERSION.SDK_INT >= 31) {
-            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-            val vibrator = vibratorManager.defaultVibrator
-            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
-        } else {
-            val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                v.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
-            }
+    private fun showDialogContinuaJogo(context: Context?) {
+        val dialogContinuaJogo = Dialog(context!!)
+        val dialogContinuaJogoBinding: StyleDialogContinuaJogoBinding = StyleDialogContinuaJogoBinding.inflate(LayoutInflater.from(context))
+        dialogContinuaJogo.setContentView(dialogContinuaJogoBinding.root)
+        dialogContinuaJogo.window?.setBackgroundDrawableResource(R.drawable.dialog_border_radius)
+        dialogContinuaJogo.window?.setLayout(widthDialog, heightDialog)
+        dialogContinuaJogo.setCancelable(false)
+        dialogContinuaJogo.show()
+
+        dialogContinuaJogoBinding.btnIniciaJogo.setOnClickListener{
+            dialogContinuaJogo.dismiss()
+            showDialogSetNumDiscos(this)
         }
 
+        dialogContinuaJogoBinding.btnContinuaJogo.setOnClickListener{
+            dialogContinuaJogo.dismiss()
+            reconstruindoJogoAntigo(this)
+        }
+    }
+
+    private fun vibratePhone() {
+        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
     private fun novoJogo(){
@@ -289,10 +329,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getIdElemto(id: Int?): LinearLayout {
-//        val idViewtorre1: LinearLayout = findViewById(R.id.ViewTorre1)
-//        val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
-//        val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
-
         when (id) {
             1 -> return binding.ViewTorre1
             2 -> return binding.ViewTorre2
@@ -352,7 +388,7 @@ class MainActivity : AppCompatActivity() {
                 verificaViroria()
             } else {
                 Toast.makeText(this, "Movimento Não Permitido", LENGTH_SHORT).show()
-                vibratePhone(this)
+                vibratePhone()
             }
         }
     }
@@ -367,21 +403,21 @@ class MainActivity : AppCompatActivity() {
     private fun dataBlocks(numBlock: Int, context: Context): TextView {
         val bloco = TextView(context)
 
+        val widthViewTorre=binding.ViewTorre1.width
+        val heightViewTorre=(binding.ViewTorre1.height * 0.75).toInt()
         //Define tamanhos
         val blocoWidth:Int = when(numBlock){
-            1->numBlock * 90
-            else->numBlock*70
+            1->(0.15 * numBlock * widthViewTorre).toInt()
+            else->(0.1 *numBlock*widthViewTorre).toInt()
         }
 
-        val blocoHeight:Int = when(numDisco){
-            3->100
-            4->80
-            5->70
-            else->60
-        }
+        val blocoHeight:Int= heightViewTorre/numDisco
+
 
         bloco.layoutParams = LinearLayout.LayoutParams(blocoWidth, blocoHeight)
         bloco.setBackgroundResource(R.drawable.border_radius_disk)
+
+        bloco.baseline
 
         //mantem o 10 "invisivel"
         if (numBlock==10){
@@ -392,23 +428,23 @@ class MainActivity : AppCompatActivity() {
         val colorDisco = when (numBlock) {
            10 -> "#333333"//defoult
 
-            1 -> "#008688"//vermelho
+            1 -> "#008688"//ciano
 
-            2 -> "#0095B7"//laranja
+            2 -> "#0095B7"//azul
 
-            3 -> "#38731D"//azul
+            3 -> "#38731D"//verde escuro
 
-            4 -> "#A8C93E" //roxo
+            4 -> "#A8C93E"//verde
 
-            5 -> "#EAA322"//verde
+            5 -> "#F2AB27"//amarelo
 
-            6 -> "#C2261C" //ciano
+            6 -> "#F25C05" //laranja
 
-            7 -> "#F09E07"//amarelo
+            7 -> "#D90404"//veremlho
 
-            8 -> "#D204FF"//roxo
+            8 -> "#9450F2"//roxo
 
-            9 -> "#FF9E42"//laranja
+            9 -> "#3647EB"//azul
              
 
             else -> { // Note the block
@@ -420,6 +456,96 @@ class MainActivity : AppCompatActivity() {
         bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco))
 
         return bloco
+    }
+
+    fun salveGame(){
+        // Armazenando dados em SharedPreferences
+        val sharedPreferences = getSharedPreferences("possisao_jogo", MODE_PRIVATE)
+        // Criando um objeto Editor para editar (gravar no arquivo)
+        val possisaoJogoSH = sharedPreferences.edit()
+
+        //armazena, nome do arquivo e valor
+        //torre 1
+        possisaoJogoSH.putInt("tamanho_torre1", torre1.size)
+        for (i in 0 until torre1.size) {
+            possisaoJogoSH.putInt("torre1_$i", torre1[i])
+            println("Teste torre 1 ${torre1[i]}")
+        }
+
+        //torre 2
+        possisaoJogoSH.putInt("tamanho_torre2", torre2.size)
+        for (i in 0 until torre2.size) {
+            possisaoJogoSH.putInt("torre2_$i", torre2[i])
+        }
+
+        //torre 3
+        possisaoJogoSH.putInt("tamanho_torre3", torre3.size)
+        for (i in 0 until torre3.size) {
+            possisaoJogoSH.putInt("torre3_$i", torre3[i])
+        }
+        //aplica
+        possisaoJogoSH.apply()
+
+    }
+
+    //recuperando
+    fun reconstruindoJogoAntigo(context: Context){
+        //recarrega
+        binding.ViewTorre1.removeAllViewsInLayout()
+        binding.ViewTorre2.removeAllViewsInLayout()
+        binding.ViewTorre3.removeAllViewsInLayout()
+
+        val prefs: SharedPreferences = context.getSharedPreferences("possisao_jogo", 0)
+        val sizeTorre1 = prefs.getInt("tamanho_torre1", 0)
+        val sizeTorre2 = prefs.getInt("tamanho_torre2", 0)
+        val sizeTorre3 = prefs.getInt("tamanho_torre3", 0)
+
+        numDisco=(sizeTorre1-1)+(sizeTorre2-1)+(sizeTorre3-1)
+
+        for (i in 0 until sizeTorre1){
+            torre1.add(prefs.getInt("torre1_$i", 0))
+            println("Teste tamanho de torre, $torre1 e valro de i $i")
+            binding.ViewTorre1.addView(dataBlocks(i, this))
+        }
+
+
+        for (i in 0 until sizeTorre2){
+            torre2.add(prefs.getInt("torre2_$i", 0))
+            binding.ViewTorre2.addView(dataBlocks(i, this))
+        }
+
+
+        for (i in 0 until sizeTorre3){
+            torre3.add(prefs.getInt("torre3_$i", 0))
+            binding.ViewTorre3.addView(dataBlocks(10, this))
+        }
+
+        println("Teste torre, $torre2")
+    }
+
+    private fun SetViewTorreSelect(torre:Int) = when(torre){
+        1->{
+            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre_select)
+            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
+        }
+
+        2->{
+            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre_select)
+            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
+        }
+
+        3->{
+            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre_select)
+        }
+        else->{
+            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
+            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
+        }
     }
 }
 

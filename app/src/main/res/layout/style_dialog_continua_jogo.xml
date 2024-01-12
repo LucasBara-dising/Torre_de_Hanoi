@@ -8,23 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/txt_vitoria"
+        android:text="@string/txt_continuar_jogo"
         android:textColor="@color/colorTextPrimary"
         android:layout_marginTop="56dp"
         android:textSize="36sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="36dp"
-        android:text="@string/txt_parabens"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-        <androidx.appcompat.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnIniciaJogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,4 +28,19 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnContinuaJogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/small_border_radius"
+        android:backgroundTint="@color/green"
+        android:paddingStart="80dp"
+        android:paddingEnd="80dp"
+        android:text="@string/txt_continuar"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 </LinearLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,7 +11,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
             android:gravity="center_horizontal"
-            android:text="Inicar Jogo"
+            android:text="@string/txt_inicar_jogo"
             android:textColor="@color/colorTextPrimary"
             android:textSize="36sp"
             android:textStyle="bold" />
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
-            android:text="Numero de discos"
+            android:text="@string/txt_numero_de_discos"
             android:textColor="@color/colorTextSecondary"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -35,12 +36,16 @@
 
             <ImageButton
                 android:id="@+id/btn_menosDiscos"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="20dp"
                 android:layout_weight="1"
-                android:background="@drawable/arrow_triangle"
-                android:rotation="180" />
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:background="@color/beige"
+                android:src="@drawable/arrow_triangle"
+                android:rotation="180"
+                android:contentDescription="@string/txt_seta_para_esquerda" />
 
             <TextView
                 android:id="@+id/txtViewNumDiscos"
@@ -48,18 +53,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="6"
+                android:text="@string/txt_num_inicial"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
             <ImageButton
                 android:id="@+id/btn_maisDiscos"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="20dp"
                 android:layout_weight="1"
-                android:background="@drawable/arrow_triangle" />
+                android:contentDescription="@string/txt_seta_para_direita"
+                android:padding="2dp"
+                android:scaleType="centerInside"
+                android:background="@color/beige"
+                android:src="@drawable/arrow_triangle" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -67,30 +76,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="34dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/small_border_radius"
             android:backgroundTint="@color/green"
             android:paddingStart="80dp"
             android:paddingEnd="80dp"
-            android:text="Começar"
+            android:text="@string/txt_comecar"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/btnInicetste"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="34dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/small_border_radius"
-        android:backgroundTint="@color/green"
-        android:paddingStart="80dp"
-        android:paddingEnd="80dp"
-        android:text="Começar"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
 </LinearLayout>

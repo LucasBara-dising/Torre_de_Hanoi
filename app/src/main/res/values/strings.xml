@@ -1,5 +1,25 @@
 <resources>
     <string name="app_name">Torre of Hanói</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="txt_vitoria">Vitória</string>
+    <string name="txt_parabens">Parabéns você terminou o desafio</string>
+    <string name="txt_novo_jogo">Novo Jogo</string>
+    <string name="txt_inicar_jogo">Inicar Jogo</string>
+    <string name="txt_numero_de_discos">Número de discos</string>
+    <string name="txt_seta_para_esquerda">seta para esquerda</string>
+    <string name="txt_num_inicial">6</string>
+    <string name="txt_seta_para_direita">seta para direita</string>
+    <string name="txt_comecar">Começar</string>
+    <string name="txt_torre_de_hanoi">Torre de Hanoi</string>
+    <string name="txt_btn_fechar">botão de fechar</string>
+    <string name="txt_objetivo">Objetivo</string>
+    <string name="txt_desc_objetivo">Mover a pilha de discos para outra torre</string>
+    <string name="txt_regras">Regras</string>
+    <string name="txt_desc_regras">So é permitido mover um disco por vez.\nNão é permitido colocar um disco maior em cima de um menor</string>
+    <string name="txt_a">A</string>
+    <string name="txt_b">B</string>
+    <string name="txt_c">C</string>
+    <string name="txt_btn_menu">botão menu</string>
+    <string name="txt_continuar">Continuar</string>
+    <string name="txt_continuar_jogo">Continuar Jogo</string>
 </resources>
