@@ -1,6 +1,8 @@
 package com.example.torre_de_hani
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipDescription
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
@@ -9,6 +11,8 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
+import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -23,7 +27,7 @@ import com.example.torre_de_hani.databinding.StyleDialogNumDiscosBinding
 import com.example.torre_de_hani.databinding.StyleDialogVitoriaBinding
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickListener {
 
     //criando pilhas
     private var torre1 = ArrayDeque(listOf(10))
@@ -42,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     /*TODO:
     - alterar btn de sair
     - colocar anuncios
+    - otimizar
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,89 +82,89 @@ class MainActivity : AppCompatActivity() {
         val idViewtorre2: LinearLayout = findViewById(R.id.ViewTorre2)
         val idViewtorre3: LinearLayout = findViewById(R.id.ViewTorre3)
 
-        val arraySendblock = HashMap<String, Int>()
-        var torreSeletecRement = 0
+        //defione os lugares que poden ser receber
+        idViewtorre1.setOnDragListener(this)
+        idViewtorre2.setOnDragListener(this)
+        idViewtorre3.setOnDragListener(this)
 
-        idViewtorre1.setOnClickListener {
-            if (torreSeletecRement == 0) {
-                setViewTorreSelect(1) //define se a barra de fundo esta selecionada
-                arraySendblock["Rementente"] = 1 //passa o id da torre que envia
-                torreSeletecRement++             //roda para definir destinatario
-            } else {
-                arraySendblock["Destinatario"] = 1 //passa o id da torre que recebe
-                torreSeletecRement = 0
-
-                val valuesRementente = arraySendblock["Rementente"]
-                val valuesDestinatario = arraySendblock["Destinatario"]
-
-                if (valuesRementente != valuesDestinatario) {
-                    tranfereBloco(
-                        getArrayElemto(valuesRementente),
-                        getArrayElemto(valuesDestinatario),
-                        getIdElemto(valuesRementente),
-                        getIdElemto(valuesDestinatario)
-                    )
-                }
-                setViewTorreSelect(0)
-            }
-        }
-
-        idViewtorre2.setOnClickListener {
-            if (torreSeletecRement == 0) {
-                setViewTorreSelect(2)
-                arraySendblock["Rementente"] = 2
-                torreSeletecRement++
-            } else {
-                arraySendblock["Destinatario"] = 2
-                torreSeletecRement = 0
-
-                val valuesRementente = arraySendblock["Rementente"]
-                val valuesDestinatario = arraySendblock["Destinatario"]
-
-                if (valuesRementente != valuesDestinatario) {
-                    tranfereBloco(
-                        getArrayElemto(valuesRementente),
-                        getArrayElemto(valuesDestinatario),
-                        getIdElemto(valuesRementente),
-                        getIdElemto(valuesDestinatario)
-                    )
-                }
-                setViewTorreSelect(0)
-            }
-        }
-
-        idViewtorre3.setOnClickListener {
-            if (torreSeletecRement == 0) {
-                setViewTorreSelect(3)
-                arraySendblock["Rementente"] = 3
-                torreSeletecRement++
-            } else {
-                arraySendblock["Destinatario"] = 3
-                torreSeletecRement = 0
-
-                val valuesRementente = arraySendblock["Rementente"]
-                val valuesDestinatario = arraySendblock["Destinatario"]
-
-                if (valuesRementente != valuesDestinatario) {
-                    tranfereBloco(
-                        getArrayElemto(valuesRementente),
-                        getArrayElemto(valuesDestinatario),
-                        getIdElemto(valuesRementente),
-                        getIdElemto(valuesDestinatario)
-                    )
-                }
-                setViewTorreSelect(0)
-            }
-        }
+//        val arraySendblock = HashMap<String, Int>()
+//        var torreSeletecRement = 0
+//
+//        idViewtorre1.setOnClickListener {
+//            if (torreSeletecRement == 0) {
+//                setViewTorreSelect(1) //define se a barra de fundo esta selecionada
+//                arraySendblock["Rementente"] = 1 //passa o id da torre que envia
+//                torreSeletecRement++             //roda para definir destinatario
+//            } else {
+//                arraySendblock["Destinatario"] = 1 //passa o id da torre que recebe
+//                torreSeletecRement = 0
+//
+//                val valuesRementente = arraySendblock["Rementente"]
+//                val valuesDestinatario = arraySendblock["Destinatario"]
+//
+//                if (valuesRementente != valuesDestinatario) {
+//                    tranfereBloco(
+//                        getArrayElemto(valuesRementente),
+//                        getArrayElemto(valuesDestinatario),
+//                        getIdElemto(valuesRementente),
+//                        getIdElemto(valuesDestinatario)
+//                    )
+//                }
+//                setViewTorreSelect(0)
+//            }
+//        }
+//
+//        idViewtorre2.setOnClickListener {
+//            if (torreSeletecRement == 0) {
+//                setViewTorreSelect(2)
+//                arraySendblock["Rementente"] = 2
+//                torreSeletecRement++
+//            } else {
+//                arraySendblock["Destinatario"] = 2
+//                torreSeletecRement = 0
+//
+//                val valuesRementente = arraySendblock["Rementente"]
+//                val valuesDestinatario = arraySendblock["Destinatario"]
+//
+//                if (valuesRementente != valuesDestinatario) {
+//                    tranfereBloco(
+//                        getArrayElemto(valuesRementente),
+//                        getArrayElemto(valuesDestinatario),
+//                        getIdElemto(valuesRementente),
+//                        getIdElemto(valuesDestinatario)
+//                    )
+//                }
+//                setViewTorreSelect(0)
+//            }
+//        }
+//
+//        idViewtorre3.setOnClickListener {
+//            if (torreSeletecRement == 0) {
+//                setViewTorreSelect(3)
+//                arraySendblock["Rementente"] = 3
+//                torreSeletecRement++
+//            } else {
+//                arraySendblock["Destinatario"] = 3
+//                torreSeletecRement = 0
+//
+//                val valuesRementente = arraySendblock["Rementente"]
+//                val valuesDestinatario = arraySendblock["Destinatario"]
+//
+//                if (valuesRementente != valuesDestinatario) {
+//                    tranfereBloco(
+//                        getArrayElemto(valuesRementente),
+//                        getArrayElemto(valuesDestinatario),
+//                        getIdElemto(valuesRementente),
+//                        getIdElemto(valuesDestinatario)
+//                    )
+//                }
+//                setViewTorreSelect(0)
+//            }
+//        }
 
         binding.btnMenu.setOnClickListener {
             showDialogMenu(this)
         }
-
-    }
-    @Override
-    public override fun onPause() {
-        super.onPause()
 
     }
 
@@ -330,6 +335,25 @@ class MainActivity : AppCompatActivity() {
         return torre1
     }
 
+    private fun getNumBlockById(idBlockLastChar: Char?): Int {
+        return when ( idBlockLastChar) {
+            '0' -> 10
+            '1' -> 1
+            '2' -> 2
+            '3' -> 3
+            '4' -> 4
+            '5' -> 5
+            '6' -> 6
+            '7' -> 7
+            '8' -> 8
+            '9' -> 9
+
+            else -> {
+                10
+            }
+        }
+    }
+
     private fun tranfereBloco(
         remetente: ArrayDeque<Int>,
         destinatario: ArrayDeque<Int>,
@@ -421,21 +445,24 @@ class MainActivity : AppCompatActivity() {
             8 -> "#9450F2"//roxo
 
             9 -> "#3647EB"//azul
-             
 
             else -> { // Note the block
                 "erro:Numero não existente"
             }
-
         }
+
         //define cor
         bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco))
+        //set id e tag de identificao
+        val tagDisco = "disco$numBlock"
+        bloco.tag=tagDisco
+
+        bloco.setOnLongClickListener(this)
 
         return bloco
     }
 
     private fun salveGame(){
-        println("salvou")
         //classe para armazenar
         val tinyDB = TinyDB(applicationContext)
 
@@ -494,6 +521,137 @@ class MainActivity : AppCompatActivity() {
     private fun soundToc(){
         val toc: MediaPlayer = MediaPlayer.create(this, R.raw.sound_toc)
         toc.start()
+    }
+
+    override fun onLongClick(v: View): Boolean {
+        //usa tag para identificar
+        val item = ClipData.Item(v.tag as CharSequence)
+        val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
+        val data = ClipData(v.tag.toString(), mimeTypes, item)
+
+        // Instantiates the drag shadow builder.
+        val dragshadow = View.DragShadowBuilder(v)
+        // Starts the drag
+        v.startDrag(data, dragshadow,v ,0)
+        return true
+    }
+
+    //discos arrastaveis
+    override fun onDrag(v: View, event: DragEvent): Boolean {
+        when (event.action) {
+            //inicia drag
+            DragEvent.ACTION_DRAG_STARTED -> {
+                val item = event.clipDescription.label
+                val numblock = getNumBlockById( item.last())
+
+                //ação iniciada
+                //se não estiver no topo da pilha não permite
+                return if (torre1.last()==numblock || torre2.last()==numblock|| torre3.last()==numblock){
+                    event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                }else{
+                    false
+                }
+            }
+
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                //muda a cor da linear layou rementente
+                when(v.id){
+                    R.id.ViewTorre1-> {
+                        binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre_select)
+                    }
+
+                    R.id.ViewTorre2-> {
+                        binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre_select)
+                    }
+
+                    R.id.ViewTorre3-> {
+                        binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre_select)
+                    }
+                }
+
+                v.invalidate()
+                return true
+            }
+
+            DragEvent.ACTION_DRAG_LOCATION ->                 // Ignore the event
+                return true
+
+            //volta ao normal
+            DragEvent.ACTION_DRAG_EXITED -> {
+                //deu certo, volta a cor para a que estava
+                when(v.id){
+                    R.id.ViewTorre1-> {
+                        binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
+                    }
+
+                    R.id.ViewTorre2-> {
+                        binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
+                    }
+
+                    R.id.ViewTorre3-> {
+                        binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
+                    }
+                }
+                v.invalidate()
+                return true
+            }
+
+            //item solto
+            DragEvent.ACTION_DROP -> {
+                val item = event.clipData.getItemAt(0)
+                //define o valor do disco
+                val numblock = getNumBlockById( item.text.last())
+
+                val destinatario:Int
+
+                //define o remente com base no array que tiver aquele valor
+                val remetente: Int = if (torre1.contains(numblock)){
+                    1
+                }else if(torre2.contains(numblock)){
+                    2
+                }else{
+                    3
+                }
+
+                //destinatarios
+                when (v.id) {
+                    R.id.ViewTorre1 -> {
+                        binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
+
+                        destinatario=1
+                        tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
+                        idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
+                    }
+
+                    R.id.ViewTorre2 -> {
+                        binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
+
+                        destinatario=2
+                        tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
+                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
+                    }
+
+                    R.id.ViewTorre3 -> {
+                        binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
+
+                        destinatario=3
+                        tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
+                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
+
+                    }
+                }
+                return true
+            }
+
+            //fim do drag
+            DragEvent.ACTION_DRAG_ENDED -> {
+                v.invalidate()
+                return true
+            }
+
+            else -> Log.i("DragDrop Example", "Unknown action type received by OnDragListener.")
+        }
+        return false
     }
     private fun setViewTorreSelect(torre:Int) = when(torre){
         1->{
