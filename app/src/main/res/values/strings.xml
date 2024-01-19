@@ -22,4 +22,6 @@
     <string name="txt_btn_menu">botão menu</string>
     <string name="txt_continuar">Continuar</string>
     <string name="txt_continuar_jogo">Continuar Jogo</string>
+    <string name="txt_comoJogarDesc">Segure no disco desejado e arraste para a pilha que deseja</string>
+    <string name="txt_como_jogar">Como Jogar</string>
 </resources>

@@ -25,6 +25,8 @@ import com.example.torre_de_hani.databinding.StyleDialogContinuaJogoBinding
 import com.example.torre_de_hani.databinding.StyleDialogInfosBinding
 import com.example.torre_de_hani.databinding.StyleDialogNumDiscosBinding
 import com.example.torre_de_hani.databinding.StyleDialogVitoriaBinding
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 
 
 class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickListener {
@@ -43,16 +45,17 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
     private var widthDialog = 0
     private var heightDialog = 0
 
-    /*TODO:
-    - alterar btn de sair
-    - colocar anuncios
-    - otimizar
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        //inicia o anuncio
+        MobileAds.initialize(this) {}
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
 
         //esconde staus bar
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -86,81 +89,6 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
         idViewtorre1.setOnDragListener(this)
         idViewtorre2.setOnDragListener(this)
         idViewtorre3.setOnDragListener(this)
-
-//        val arraySendblock = HashMap<String, Int>()
-//        var torreSeletecRement = 0
-//
-//        idViewtorre1.setOnClickListener {
-//            if (torreSeletecRement == 0) {
-//                setViewTorreSelect(1) //define se a barra de fundo esta selecionada
-//                arraySendblock["Rementente"] = 1 //passa o id da torre que envia
-//                torreSeletecRement++             //roda para definir destinatario
-//            } else {
-//                arraySendblock["Destinatario"] = 1 //passa o id da torre que recebe
-//                torreSeletecRement = 0
-//
-//                val valuesRementente = arraySendblock["Rementente"]
-//                val valuesDestinatario = arraySendblock["Destinatario"]
-//
-//                if (valuesRementente != valuesDestinatario) {
-//                    tranfereBloco(
-//                        getArrayElemto(valuesRementente),
-//                        getArrayElemto(valuesDestinatario),
-//                        getIdElemto(valuesRementente),
-//                        getIdElemto(valuesDestinatario)
-//                    )
-//                }
-//                setViewTorreSelect(0)
-//            }
-//        }
-//
-//        idViewtorre2.setOnClickListener {
-//            if (torreSeletecRement == 0) {
-//                setViewTorreSelect(2)
-//                arraySendblock["Rementente"] = 2
-//                torreSeletecRement++
-//            } else {
-//                arraySendblock["Destinatario"] = 2
-//                torreSeletecRement = 0
-//
-//                val valuesRementente = arraySendblock["Rementente"]
-//                val valuesDestinatario = arraySendblock["Destinatario"]
-//
-//                if (valuesRementente != valuesDestinatario) {
-//                    tranfereBloco(
-//                        getArrayElemto(valuesRementente),
-//                        getArrayElemto(valuesDestinatario),
-//                        getIdElemto(valuesRementente),
-//                        getIdElemto(valuesDestinatario)
-//                    )
-//                }
-//                setViewTorreSelect(0)
-//            }
-//        }
-//
-//        idViewtorre3.setOnClickListener {
-//            if (torreSeletecRement == 0) {
-//                setViewTorreSelect(3)
-//                arraySendblock["Rementente"] = 3
-//                torreSeletecRement++
-//            } else {
-//                arraySendblock["Destinatario"] = 3
-//                torreSeletecRement = 0
-//
-//                val valuesRementente = arraySendblock["Rementente"]
-//                val valuesDestinatario = arraySendblock["Destinatario"]
-//
-//                if (valuesRementente != valuesDestinatario) {
-//                    tranfereBloco(
-//                        getArrayElemto(valuesRementente),
-//                        getArrayElemto(valuesDestinatario),
-//                        getIdElemto(valuesRementente),
-//                        getIdElemto(valuesDestinatario)
-//                    )
-//                }
-//                setViewTorreSelect(0)
-//            }
-//        }
 
         binding.btnMenu.setOnClickListener {
             showDialogMenu(this)
@@ -282,7 +210,6 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
             reconstruindoJogoAntigo()
         }
     }
-
     private fun vibratePhone() {
         val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
@@ -310,29 +237,25 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
     }
 
     private fun getIdElemto(id: Int?): LinearLayout {
-        when (id) {
-            1 -> return binding.ViewTorre1
-            2 -> return binding.ViewTorre2
-            3 -> return binding.ViewTorre3
+        return when (id) {
+            1 -> binding.ViewTorre1
+            2 -> binding.ViewTorre2
+            3 -> binding.ViewTorre3
             else -> {
-                print("erro: Numero não LinearLayout")
+                binding.ViewTorre1
             }
-
         }
-        return binding.ViewTorre1
     }
 
     private fun getArrayElemto(id: Int?): ArrayDeque<Int> {
-        when (id) {
-            1 -> return torre1
-            2 -> return torre2
-            3 -> return torre3
+        return when (id) {
+            1 -> torre1
+            2 -> torre2
+            3 -> torre3
             else -> {
-                print("erro: Numero não é array")
+                torre1
             }
-
         }
-        return torre1
     }
 
     private fun getNumBlockById(idBlockLastChar: Char?): Int {
@@ -347,10 +270,7 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
             '7' -> 7
             '8' -> 8
             '9' -> 9
-
-            else -> {
-                10
-            }
+            else -> 10
         }
     }
 
@@ -394,6 +314,7 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
                 vibratePhone()
             }
         }
+        //ao final de cada jogada salva o estado
         salveGame()
     }
 
@@ -409,6 +330,7 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
 
         val widthViewTorre=binding.ViewTorre1.width
         val heightViewTorre=(binding.ViewTorre1.height * 0.75).toInt()
+
         //Define tamanhos
         val blocoWidth:Int = when(numBlock){
             1->(0.15 * numBlock * widthViewTorre).toInt()
@@ -425,6 +347,7 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
             bloco.layoutParams = LinearLayout.LayoutParams(0, 0)
         }
 
+        //define cor dos discos
         val colorDisco = when (numBlock) {
            10 -> "#333333"//defoult
 
@@ -447,13 +370,13 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
             9 -> "#3647EB"//azul
 
             else -> { // Note the block
-                "erro:Numero não existente"
+                "#943E10"//cor generica
             }
         }
 
         //define cor
         bloco.backgroundTintList = ColorStateList.valueOf(Color.parseColor(colorDisco))
-        //set id e tag de identificao
+        //set tag de identificao
         val tagDisco = "disco$numBlock"
         bloco.tag=tagDisco
 
@@ -505,6 +428,7 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
         binding.ViewTorre2.removeAllViewsInLayout()
         binding.ViewTorre3.removeAllViewsInLayout()
 
+        //recontroi
         for (valueBlockTorre1 in torre1.reversed()) {
             binding.ViewTorre1.addView(dataBlocks(valueBlockTorre1, this))
         }
@@ -605,13 +529,14 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
                 val destinatario:Int
 
                 //define o remente com base no array que tiver aquele valor
-                val remetente: Int = if (torre1.contains(numblock)){
-                    1
-                }else if(torre2.contains(numblock)){
-                    2
-                }else{
-                    3
-                }
+                val remetente: Int =
+                    if (torre1.contains(numblock)){
+                        1
+                    }else if(torre2.contains(numblock)){
+                        2
+                    }else{
+                        3
+                    }
 
                 //destinatarios
                 when (v.id) {
@@ -620,7 +545,8 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
 
                         destinatario=1
                         tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
-                        idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
+                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario)
+                        )
                     }
 
                     R.id.ViewTorre2 -> {
@@ -628,7 +554,8 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
 
                         destinatario=2
                         tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
-                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
+                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario)
+                        )
                     }
 
                     R.id.ViewTorre3 -> {
@@ -636,8 +563,8 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
 
                         destinatario=3
                         tranfereBloco(remetente = getArrayElemto(remetente), destinatario = getArrayElemto(destinatario),
-                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario))
-
+                            idRemetente = getIdElemto(remetente), idDestinatario =  getIdElemto(destinatario)
+                        )
                     }
                 }
                 return true
@@ -652,30 +579,6 @@ class MainActivity : AppCompatActivity(), View.OnDragListener, View.OnLongClickL
             else -> Log.i("DragDrop Example", "Unknown action type received by OnDragListener.")
         }
         return false
-    }
-    private fun setViewTorreSelect(torre:Int) = when(torre){
-        1->{
-            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre_select)
-            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
-        }
-
-        2->{
-            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre_select)
-            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
-        }
-
-        3->{
-            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre_select)
-        }
-        else->{
-            binding.bgBarraTorre1.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre2.setBackgroundResource(R.drawable.bg_torre)
-            binding.bgBarraTorre3.setBackgroundResource(R.drawable.bg_torre)
-        }
     }
 }
 

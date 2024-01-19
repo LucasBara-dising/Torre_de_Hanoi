@@ -10,73 +10,107 @@
         android:id="@+id/btnCancelDialogMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/btn_close"
+        android:padding="10dp"
+        android:src="@drawable/btn_close_x"
         android:contentDescription="@string/txt_btn_fechar" />
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_torre_de_hanoi"
-        android:textColor="@color/colorTextPrimary"
-        android:layout_marginTop="-38dp"
-        android:textSize="26sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="-32dp"
+        android:layout_marginStart="@dimen/_32sdp"
+        android:layout_marginEnd="@dimen/_32sdp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_objetivo"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_desc_objetivo"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_regras"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_desc_regras"
-        android:textColor="@color/colorTextSecondary"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnIniciaJogo"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="22dp"
-            android:background="@drawable/small_border_radius"
-            android:backgroundTint="@color/green"
-            android:paddingStart="80dp"
-            android:paddingEnd="80dp"
-            android:text="@string/txt_novo_jogo"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_torre_de_hanoi"
+                android:textColor="@color/colorTextPrimary"
+                android:layout_marginTop="-38dp"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_objetivo"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_desc_objetivo"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_regras"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_desc_regras"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_como_jogar"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/txt_comoJogarDesc"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnIniciaJogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/small_border_radius"
+                android:backgroundTint="@color/green"
+                android:paddingStart="80dp"
+                android:paddingEnd="80dp"
+                android:text="@string/txt_novo_jogo"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
